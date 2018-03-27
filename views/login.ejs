@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Polyhome OAuth2Orize Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" type="text/css" href="stylesheets/pure-min.css">
+  <link rel="stylesheet" type="text/css" href="stylesheets/base.css">
+  <link rel="stylesheet" type="text/css" href="stylesheets/sign-in-modules.css">
+</head>
+<body>
+
+<form action="/login" method="post" class="pure-form pure-form-stacked">
+  <fieldset>
+    <div class="upper-box">
+      <div>
+        <h1 class="title-padding">PolyHome</h1>
+	<p>授权 DuerSmartHome 访问您的账户</p>
+      </div>
+      <div class="pure-control-group">
+        <label class="labels" for="name">用户名:</label>
+
+        <div class="input-fields">
+          <input class="pure-input-1 input-fields" id="name" type="text"  name="username"/>
+        </div>
+      </div>
+      <div class="pure-control-group">
+        <label class="labels" for="password">密码:</label>
+
+        <div class="input-fields">
+          <input class="pure-input-1 input-fields" id="password" type="password" name="password"/>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-box">
+      <div class="pure-controls sign-in-button">
+        <button type="submit" value=“Submit" class="pure-button pure-button-primary">登陆</button>
+      </div>
+    </div>
+  </fieldset>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Polyhome</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" type="text/css" href="../stylesheets/pure-min.css">
+  <link rel="stylesheet" type="text/css" href="../stylesheets/base.css">
+  <link rel="stylesheet" type="text/css" href="../stylesheets/dialog-modules.css">
+</head>
+<body>
+
+<form action="/dialog/authorize/decision" method="post" class="pure-form pure-form-stacked">
+  <input name="transaction_id" type="hidden" value="<%= transactionID %>">
+  <fieldset>
+    <div class="upper-box">
+      <div>
+        <div class="main-text">PolyHome</div>
+      </div>
+      <div class="pure-control-group labels">
+        <p>
+        您将授权<b> <%= client.name %></b>
+		<p> 1. 获取您的设备列表</p>
+		<p> 2. 获取您的情景列表</p>
+		<p> 3. 控制您的设备</p>
+        </p>
+      </div>
+    </div>
+    <div class="bottom-box">
+      <div class="pure-controls accept-cancel-buttons">
+        <div>
+          <input class="pure-button pure-button-primary" type="submit" value="授权" id="allow">
+          <span>&nbsp&nbsp</span>
+          <input class="pure-button" type="submit" value="取消" name="cancel" id="deny">
+        </div>
+      </div>
+    </div>
+  </fieldset>
+</form>
+
+</body>
+</html>
+
+
