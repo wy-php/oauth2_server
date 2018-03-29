@@ -34,6 +34,15 @@ exports.users = function(req, res){
         });
 };
 
+exports.findUserByPhone = function(phone){
+    return new Promise(function(resolve, reject){
+        userService.getUsersByPhone(phone)
+            .then(function(user){
+                resolve(user)
+            })
+    });
+}
+
 /**
  * API Test
  * @param {*} req 

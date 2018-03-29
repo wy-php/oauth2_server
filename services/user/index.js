@@ -12,7 +12,7 @@ exports.insertUser = function (user) {
 /**
  * 通过电话号获取用户
  */
-exports.getUsersByPhone = function (phone_num) {
-    return userModel.getUsersByPhone(phone_num);
+exports.getUsersByPhone = function (phone) {
+    return userModel.getUsersByPhone(phone);
 };
 

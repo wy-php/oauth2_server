@@ -23,5 +23,5 @@ MongoClient.connect(MONGO_URL, function(err, db){
 });
 
 exports.getDB = function(){
-  return mogo_db
-}
+    return mogo_db
+};
