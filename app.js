@@ -15,9 +15,8 @@ const path           = require('path');
 const site           = require('./site');
 const token          = require('./token');
 const user           = require('./user');
+const userCtrl       = require('./controller/user.js');
 
-console.log('Using MemoryStore for the data store');
-console.log('Using MemoryStore for the Session');
 const MemoryStore = expressSession.MemoryStore;
 
 // Express configuration
@@ -27,15 +26,15 @@ app.use(cookieParser());
 
 // Session Configuration
 app.use(expressSession({
-  saveUninitialized : true,
-  resave            : true,
-  secret            : config.session.secret,
-  store             : new MemoryStore(),
-  key               : 'authorization.sid',
-  cookie            : { maxAge: config.session.maxAge },
+    saveUninitialized : true,
+    resave            : true,
+    secret            : config.session.secret,
+    store             : new MemoryStore(),
+    key               : 'authorization.sid',
+    cookie            : { maxAge: config.session.maxAge },
 }));
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -56,6 +55,11 @@ app.post('/oauth/token',               oauth2.token);
 app.get('/api/userinfo',   user.info);
 app.get('/api/clientinfo', client.info);
 
+app.get('/api/users', userCtrl.users)
+app.post('/api/user', userCtrl.insertusers)
+app.get('/api/login', userCtrl.userLogin)
+app.get('/api/familis', userCtrl.userFamilisQuery)
+
 // Mimicking google's token info endpoint from
 // https://developers.google.com/accounts/docs/OAuth2UserAgent#validatetoken
 app.get('/api/tokeninfo', token.info);
@@ -71,36 +75,31 @@ app.use(express.static(path.join(__dirname, 'public')));
 // trace, this will log the json of the error message
 // to the browser and pass along the status with it
 app.use((err, req, res, next) => {
-  if (err) {
-    if (err.status == null) {
-      console.error('Internal unexpected error from:', err.stack);
-      res.status(500);
-      res.json(err);
+    if (err){
+        if (err.status == null){
+            console.error('Internal unexpected error from:', err.stack);
+            res.status(500);
+            res.json(err);
+        } else {
+            res.status(err.status);
+            res.json(err);
+        }
     } else {
-      res.status(err.status);
-      res.json(err);
+        next();
     }
-  } else {
-    next();
-  }
 });
 
-// From time to time we need to clean up any expired tokens
-// in the database
+// From time to time we need to clean up any expired tokens in the database
 setInterval(() => {
-  db.accessTokens.removeExpired()
-  .catch(err => console.error('Error trying to remove expired tokens:', err.stack));
+    db.accessTokens.removeExpired().catch(err => console.error('Error trying to remove expired tokens:', err.stack));
 }, config.db.timeToCheckExpiredTokens * 1000);
 
 // TODO: Change these for your own certificates.  This was generated through the commands:
-// openssl genrsa -out privatekey.pem 2048
-// openssl req -new -key privatekey.pem -out certrequest.csr
-// openssl x509 -req -in certrequest.csr -signkey privatekey.pem -out certificate.pem
 const options = {
-  key  : fs.readFileSync(path.join(__dirname, 'certs/privatekey.pem')),
-  cert : fs.readFileSync(path.join(__dirname, 'certs/certificate.pem')),
+    key  : fs.readFileSync(path.join(__dirname, 'certs/privatekey.pem')),
+    cert : fs.readFileSync(path.join(__dirname, 'certs/certificate.pem')),
 };
 
-// Create our HTTPS server listening on port 3000.
+// Create our HTTPS server listening on port.
 https.createServer(options, app).listen(8016);
-console.log('OAuth 2.0 Authorization Server started on port 3000');
+console.log('OAuth 2.0 Authorization Server started on port 8016');

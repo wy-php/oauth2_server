@@ -24,22 +24,24 @@ const validate = require('./validate');
  * @param   {Object}  res - The response
  * @returns {Promise} Returns the promise for testing only
  */
-exports.info = (req, res) =>
-  validate.tokenForHttp(req.query.access_token)
-  .then(() => db.accessTokens.find(req.query.access_token))
-  .then(token => validate.tokenExistsForHttp(token))
-  .then(token =>
+exports.info = function(req, res) {
+    validate.tokenForHttp(req.query.access_token)
+      .then(() => db.accessTokens.find(req.query.access_token))
+      .then(token => validate.tokenExistsForHttp(token))
+      .then(token =>
     db.clients.find(token.clientID)
-    .then(client => validate.clientExistsForHttp(client))
-    .then(client => ({ client, token })))
-  .then(({ client, token }) => {
-    const expirationLeft = Math.floor((token.expirationDate.getTime() - Date.now()) / 1000);
-    res.json({ audience : client.clientId, expires_in : expirationLeft });
-  })
-  .catch((err) => {
-    res.status(err.status);
-    res.json({ error: err.message });
-  });
+      .then(client => validate.clientExistsForHttp(client))
+      .then(client => ({ client, token })))
+      .then(({ client, token }) => {
+        const expirationLeft = Math.floor((token.expirationDate.getTime() - Date.now()) / 1000);
+        res.json({ audience : client.clientId, expires_in : expirationLeft });
+      })
+      .catch((err) => {
+        res.status(err.status);
+        res.json({ error: err.message });
+      });
+}
+
 
 /**
  * This endpoint is for revoking a token.  This has the same signature to
