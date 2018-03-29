@@ -1,5 +1,8 @@
 'use strict';
 
+const apiutil = require('../helper/api.js');
+const userCtrl = require('../controller/user.js');
+
 /**
  * This is the configuration of the users that are allowed to connected to your authorization
  * server. These represent users of different client applications that can connect to the
@@ -35,5 +38,26 @@ exports.find = id => Promise.resolve(users.find(user => user.id === id));
  * @param   {Function} done     - The user if found, otherwise returns undefined
  * @returns {Promise} resolved user if found, otherwise resolves undefined
  */
-exports.findByUsername = username =>
-  Promise.resolve(users.find(user => user.username === username));
+exports.findByUsername = function(username){
+  return new Promise(function(resolve, reject){
+    userCtrl.findUserByPhone(username).then(function(user){
+      console.log(user)
+      resolve(user)
+    });
+  });
+  // 1.API接口获取用户密码
+  apiutil.generateUserLogin('15712908185', '12345678')
+    .then(function(body){
+      // console.log(body.id, body.ticket);
+      // 2.判断数据库中是否存在
+      
+    })
+  //   .then(function(isexist){
+  //     // 3.存在返回  不存在存储
+
+  //   })
+  //   .catch(function(err){
+  //     console.log(err);
+  //   });
+  // Promise.resolve(users.find(user => user.username === username));
+}

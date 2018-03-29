@@ -1,5 +1,8 @@
 'use strict';
 
+const apiutil = require('./helper/api.js');
+const userCtrl = require('../controller/user.js');
+
 const db                                   = require('./db');
 const passport                             = require('passport');
 const { Strategy: LocalStrategy }          = require('passport-local');
@@ -16,10 +19,26 @@ const validate                             = require('./validate');
  * a user is logged in before asking them to approve the request.
  */
 passport.use(new LocalStrategy((username, password, done) => {
-  db.users.findByUsername(username)
-  .then(user => validate.user(user, password))
-  .then(user => done(null, user))
-  .catch(() => done(null, false));
+  // 1.API接口获取用户密码
+  apiutil.generateUserLogin(username, password)
+    .then(function(body){
+      console.log(body.id, body.ticket);
+      // 2.判断数据库中是否存在
+      db.users.findByUsername(username)
+        .then(function(user){
+          if (user == null){
+            console.log('数据库中用户不存在');
+            // 这里存储数据
+          }
+          return user
+        })
+        .then(user => validate.user(user, password))
+        .then(user => done(null, user))
+        .catch(() => done(null, false));
+    })
+    .catch(function(err){
+      console.log(err)
+    })
 }));
 
 /**
@@ -35,9 +54,9 @@ passport.use(new LocalStrategy((username, password, done) => {
  */
 passport.use(new BasicStrategy((clientId, clientSecret, done) => {
   db.clients.findByClientId(clientId)
-  .then(client => validate.client(client, clientSecret))
-  .then(client => done(null, client))
-  .catch(() => done(null, false));
+    .then(client => validate.client(client, clientSecret))
+    .then(client => done(null, client))
+    .catch(() => done(null, false));
 }));
 
 /**
@@ -49,9 +68,9 @@ passport.use(new BasicStrategy((clientId, clientSecret, done) => {
  */
 passport.use(new ClientPasswordStrategy((clientId, clientSecret, done) => {
   db.clients.findByClientId(clientId)
-  .then(client => validate.client(client, clientSecret))
-  .then(client => done(null, client))
-  .catch(() => done(null, false));
+    .then(client => validate.client(client, clientSecret))
+    .then(client => done(null, client))
+    .catch(() => done(null, false));
 }));
 
 /**
@@ -67,9 +86,9 @@ passport.use(new ClientPasswordStrategy((clientId, clientSecret, done) => {
  */
 passport.use(new BearerStrategy((accessToken, done) => {
   db.accessTokens.find(accessToken)
-  .then(token => validate.token(token, accessToken))
-  .then(token => done(null, token, { scope: '*' }))
-  .catch(() => done(null, false));
+    .then(token => validate.token(token, accessToken))
+    .then(token => done(null, token, { scope: '*' }))
+    .catch(() => done(null, false));
 }));
 
 // Register serialialization and deserialization functions.
