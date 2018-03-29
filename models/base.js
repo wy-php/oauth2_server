@@ -15,7 +15,8 @@ var mogo_db;
 
 MongoClient.connect(MONGO_URL, function(err, db){
     if (err){
-      console.log(err);
+      console.log('Database connect Error');
+      return
     }
     console.log('Database connect Success');
     mogo_db = db;

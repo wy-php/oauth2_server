@@ -61,3 +61,7 @@ exports.session = {
 exports.mongodb = {
   mongo_url: 'mongodb://127.0.0.1:27017/users'
 }
+
+exports.url = {
+  api_url: 'http://test.poly.ourjujia.com/api/v1/login'
+}
