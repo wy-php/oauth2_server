@@ -57,7 +57,7 @@ exports.generateUserLogin = function(tel, pass) {
     request(options, function (err, res, body) {
       if (!err && res.statusCode == 200) {
         console.log(body);
-        var res_data = {'id': body.data.id, 'ticket': body.data.ticket};
+        var res_data = {'id': body.data.id, 'phone': body.data.mobile};
         resolve(res_data);
       } else {
         reject({'code': 1});

@@ -1,7 +1,7 @@
 'use strict';
 
 const apiutil = require('./helper/api.js');
-const userCtrl = require('../controller/user.js');
+const userCtrl = require('./controller/user.js');
 
 const db                                   = require('./db');
 const passport                             = require('passport');
@@ -22,17 +22,19 @@ passport.use(new LocalStrategy((username, password, done) => {
   // 1.API接口获取用户密码
   apiutil.generateUserLogin(username, password)
     .then(function(body){
-      console.log(body.id, body.ticket);
-      // 2.判断数据库中是否存在
-      db.users.findByUsername(username)
-        .then(function(user){
+        console.log(body.id, body.phone);
+        // 2.判断数据库中是否存在
+        db.users.findByUsername({'phone': username})
+          .then(function(user){
           if (user == null){
             console.log('数据库中用户不存在');
             // 这里存储数据
+              userCtrl.insertusers(body)
           }
-          return user
+          console.log(body);
+          return body;
         })
-        .then(user => validate.user(user, password))
+        // .then(user => validate.user(user, password))
         .then(user => done(null, user))
         .catch(() => done(null, false));
     })
@@ -109,7 +111,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-  db.users.find(id)
+  db.users.findByUsername({'id': id})
   .then(user => done(null, user))
   .catch(err => done(err));
 });

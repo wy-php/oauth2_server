@@ -8,15 +8,24 @@ var helper = require('../helper/api.js');
  * @param {*} req 
  * @param {*} res 
  */
-exports.insertusers = function(req, res){
-  var user = {"name": 'wangyun', "age": 21, "phone": "123456"};
-  userService.insertUser(user)
-      .then(function(result) {
-          console.log(result)
-      })
-      .catch(function(err) {
-          console.log(err);
-      });
+// exports.insertusers = function(req, res){
+//   var user = {"name": 'wangyun', "age": 21, "phone": "123456"};
+//   userService.insertUser(user)
+//       .then(function(result) {
+//           console.log(result)
+//       })
+//       .catch(function(err) {
+//           console.log(err);
+//       });
+// };
+exports.insertusers = function(user){
+    userService.insertUser(user)
+        .then(function(result) {
+            console.log(result)
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
 };
 
 /**
