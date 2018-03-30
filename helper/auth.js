@@ -1,14 +1,12 @@
 'use strict';
 
-const apiutil = require('./helper/api.js');
-const userCtrl = require('../controller/user.js');
-
-const db                                   = require('./db');
 const passport                             = require('passport');
 const { Strategy: LocalStrategy }          = require('passport-local');
 const { BasicStrategy }                    = require('passport-http');
 const { Strategy: ClientPasswordStrategy } = require('passport-oauth2-client-password');
 const { Strategy: BearerStrategy }         = require('passport-http-bearer');
+
+const db                                   = require('../db');
 const validate                             = require('./validate');
 
 /**
@@ -19,27 +17,13 @@ const validate                             = require('./validate');
  * a user is logged in before asking them to approve the request.
  */
 passport.use(new LocalStrategy((username, password, done) => {
-  // 1.API接口获取用户密码
-  apiutil.generateUserLogin(username, password)
-    .then(function(body){
-      console.log(body.id, body.ticket);
-      // 2.判断数据库中是否存在
-      db.users.findByUsername(username)
-        .then(function(user){
-          if (user == null){
-            console.log('数据库中用户不存在');
-            // 这里存储数据
-          }
-          return user
-        })
-        .then(user => validate.user(user, password))
-        .then(user => done(null, user))
-        .catch(() => done(null, false));
+    db.users.findByUsername(username)
+      .then(function (user) { return user })
+      .then(user => validate.user(user, password))
+      .then(user => done(null, user))
+      .catch(() => done(null, false));
     })
-    .catch(function(err){
-      console.log(err)
-    })
-}));
+);
 
 /**
  * BasicStrategy & ClientPasswordStrategy

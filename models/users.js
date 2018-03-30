@@ -18,7 +18,7 @@ exports.getUserById = function (id) {
 };
 
 /*
- * 插入数据到 user collection 中
+ * 插入数据到user集合中
  */
 exports.insertUser = function(user) {
     return new Promise(function(resolve, reject){
@@ -36,23 +36,6 @@ exports.insertUser = function(user) {
 /*
  * 通过电话号获取用户
  */
-exports.getUsersByPhone = function(num){
-    return new Promise(function(resolve, reject) {
-        db.getDB().collection('users', function(err, collection) {
-            if (err) {
-                return reject(err);
-            }
-            collection.findOne({'phone': num}, function(err, result){
-                console.log("查询结果: " + result)
-                resolve(result);
-            });
-        });
-    });
-};
-
-/*
- * 通过电话号获取用户
- */
 exports.generateGetUsersByPhone = function(num){
     return new Promise(function(resolve, reject) {
         db.getDB().collection('users', function(err, collection) {
@@ -62,6 +45,36 @@ exports.generateGetUsersByPhone = function(num){
             collection.findOne({'phone': num}, function(err, result){
                 resolve(result);
             });
+        });
+    });
+};
+
+/*
+ * 通过电话号获取用户
+ */
+exports.getUsersByPhone = function(phone){
+    db.getDB().collection('users', function(err, collection) {
+        if (err) {
+            return null;
+        }
+        collection.findOne(phone, function(err, result){
+            console.log("查询结果: " + result)
+            return result;
+        });
+    });
+};
+
+/**
+ * 通过电话号码更新数据
+ */
+exports.updateUsersByPhone = function(phone){
+    db.getDB().collection('users', function(err, collection) {
+        if (err) {
+            return null;
+        }
+        collection.update({'phone': phone}, function(err, result){
+            console.log("查询结果: " + result)
+            return result;
         });
     });
 };

@@ -1,7 +1,7 @@
 'use strict';
 
 const db       = require('./db');
-const validate = require('./validate');
+const validate = require('./helper/validate');
 
 /**
  * This endpoint is for verifying a token.  This has the same signature to
@@ -28,8 +28,7 @@ exports.info = function(req, res) {
     validate.tokenForHttp(req.query.access_token)
       .then(() => db.accessTokens.find(req.query.access_token))
       .then(token => validate.tokenExistsForHttp(token))
-      .then(token =>
-    db.clients.find(token.clientID)
+      .then(token => db.clients.find(token.clientID)
       .then(client => validate.clientExistsForHttp(client))
       .then(client => ({ client, token })))
       .then(({ client, token }) => {
