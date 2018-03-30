@@ -1,10 +1,9 @@
 'use strict';
 
-const config  = require('./config');
-const db      = require('./db');
-const utils   = require('./utils');
 const process = require('process');
-const apiutil = require('./helper/api')
+const config  = require('../config');
+const db      = require('../db');
+const utils   = require('./utils');
 
 /** Validate object to attach all functions to  */
 const validate = Object.create(null);
@@ -34,18 +33,6 @@ validate.logAndThrow = (msg) => {
  * @returns {Object} The user if valid
  */
 validate.user = (user, password) => {
-    // apiutil.generateUserLogin('15712908185', '12345678')
-    //   .then(function(body){
-    //     console.log(body.id, body.ticket);
-    //     return apiutil.generateQueryFamilies(body.id, body.ticket);
-    //   })
-    //   .then(function(data){
-    //     // 家庭列表
-    //     console.log(data);
-    //   })
-    //   .catch(function(err){
-    //     console.log(err);
-    //   });
     validate.userExists(user);
     if (user.password !== password) {
         validate.logAndThrow('User password does not match');
@@ -242,7 +229,6 @@ validate.tokenExistsForHttp = (token) => {
   }
   return token;
 };
-
 
 /**
  * Given a client this will return the client if it is not null. Otherwise this will throw a

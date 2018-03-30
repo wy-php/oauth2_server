@@ -1,21 +1,22 @@
 'use strict';
 
-const bodyParser     = require('body-parser');
-const client         = require('./client');
-const cookieParser   = require('cookie-parser');
-const config         = require('./config');
-const db             = require('./db');
 const express        = require('express');
 const expressSession = require('express-session');
+const bodyParser     = require('body-parser');
 const fs             = require('fs');
-const https          = require('https');
-const oauth2         = require('./oauth2');
-const passport       = require('passport');
 const path           = require('path');
-const site           = require('./site');
+const passport       = require('passport');
+const https          = require('https');
+const cookieParser   = require('cookie-parser');
+
+const client         = require('./helper/client');
+const config         = require('./config');
+const db             = require('./db');
+const oauth2         = require('./helper/oauth2');
+const site           = require('./router/site');
 const token          = require('./token');
 const user           = require('./user');
-const userCtrl       = require('./controller/user.js');
+const userCtrl       = require('./controller/user');
 
 const MemoryStore = expressSession.MemoryStore;
 
@@ -40,33 +41,25 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Passport configuration
-require('./auth');
+require('./helper/auth');
 
-app.get('/',        site.index);
-app.get('/login',   site.loginForm);
-app.post('/login',  site.login);
-app.get('/logout',  site.logout);
+app.get('/', site.index);
+app.get('/login', site.loginForm);
+app.post('/login', site.login);
+app.get('/logout', site.logout);
 app.get('/account', site.account);
 
-app.get('/authorize',           oauth2.authorization);
-app.post('/dialog/authorize/decision', oauth2.decision);
-app.post('/oauth/token',               oauth2.token);
+app.get('/authorize',                   oauth2.authorization);
+app.post('/dialog/authorize/decision',  oauth2.decision);
+app.post('/token',                      oauth2.token);
 
+// =======================================
+// Mimicking google's token revoke endpoint from
+app.get('/api/revoke', token.revoke);
 app.get('/api/userinfo',   user.info);
 app.get('/api/clientinfo', client.info);
-
-app.get('/api/users', userCtrl.users)
-app.post('/api/user', userCtrl.insertusers)
-app.get('/api/login', userCtrl.userLogin)
-app.get('/api/familis', userCtrl.userFamilisQuery)
-
-// Mimicking google's token info endpoint from
-// https://developers.google.com/accounts/docs/OAuth2UserAgent#validatetoken
 app.get('/api/tokeninfo', token.info);
-
-// Mimicking google's token revoke endpoint from
-// https://developers.google.com/identity/protocols/OAuth2WebServer
-app.get('/api/revoke', token.revoke);
+// =======================================
 
 // static resources for stylesheets, images, javascript files
 app.use(express.static(path.join(__dirname, 'public')));

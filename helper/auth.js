@@ -1,14 +1,12 @@
 'use strict';
 
-const apiutil = require('./helper/api.js');
-const userCtrl = require('./controller/user.js');
-
-const db                                   = require('./db');
 const passport                             = require('passport');
 const { Strategy: LocalStrategy }          = require('passport-local');
 const { BasicStrategy }                    = require('passport-http');
 const { Strategy: ClientPasswordStrategy } = require('passport-oauth2-client-password');
 const { Strategy: BearerStrategy }         = require('passport-http-bearer');
+
+const db                                   = require('../db');
 const validate                             = require('./validate');
 
 /**
@@ -31,7 +29,7 @@ passport.use(new LocalStrategy((username, password, done) => {
           if (user == null){
             console.log('数据库中用户不存在');
             // 这里存储数据
-              userCtrl.insertusers(body)
+              userCtrl.insertusers(body);
           }
           //console.log(body);
           return body;
@@ -39,11 +37,8 @@ passport.use(new LocalStrategy((username, password, done) => {
         // .then(user => validate.user(user, password))
         .then(user => done(null, user))
         .catch(() => done(null, false));
-    })
-    .catch(function(err){
-      console.log(err)
-    })
-}));
+    });
+}))
 
 /**
  * BasicStrategy & ClientPasswordStrategy

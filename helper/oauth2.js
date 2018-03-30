@@ -7,12 +7,12 @@
 // through a process of the user granting access, and the client exchanging
 // the grant for an access token.
 
-const config      = require('./config');
-const db          = require('./db');
 const login       = require('connect-ensure-login');
 const oauth2orize = require('oauth2orize');
 const passport    = require('passport');
-const utils       = require('./utils');
+const config      = require('../config');
+const db          = require('../db');
+const utils       = require('./utils.js');
 const validate    = require('./validate');
 
 // create OAuth 2.0 server

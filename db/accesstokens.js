@@ -1,6 +1,7 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
+const userService = require('../services/token/index.js');
 
 // The access tokens.
 // You will use these to access your end point data through the means outlined
@@ -20,6 +21,7 @@ let tokens = Object.create(null);
 exports.find = (token) => {
   try {
     const id = jwt.decode(token).jti;
+    console.log("asscess token: " + id);
     return Promise.resolve(tokens[id]);
   } catch (error) {
     return Promise.resolve(undefined);
@@ -38,9 +40,12 @@ exports.find = (token) => {
  * @returns {Promise} resolved with the saved token
  */
 exports.save = (token, expirationDate, userID, clientID, scope) => {
-  const id = jwt.decode(token).jti;
-  tokens[id] = { userID, expirationDate, clientID, scope };
-  return Promise.resolve(tokens[id]);
+    const id = jwt.decode(token).jti;
+    tokens[id] = { userID, expirationDate, clientID, scope };
+    console.log("save acess token: " + tokens);
+    // 这里存储已经通过的token数据
+    userService.saveToken(tokens[id]);
+    return Promise.resolve(tokens[id]);
 };
 
 /**

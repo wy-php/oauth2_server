@@ -18,7 +18,7 @@ exports.getUserById = function (id) {
 };
 
 /*
- * 插入数据到 user collection 中
+ * 插入数据到user集合中
  */
 exports.insertUser = function(user) {
     return new Promise(function(resolve, reject){
