@@ -28,7 +28,6 @@ const users = [{
 exports.findByUsername = function(username){
   return new Promise(function(resolve, reject){
     userCtrl.findUserByPhone(username).then(function(user){
-      console.log(user);
       resolve(user)
     });
   });

@@ -43,7 +43,6 @@ exports.generateUserLogin = function(tel, pass) {
     var md5sum = crypto.createHash('md5');
     md5sum.update(vercy);
     var sign_data = md5sum.digest('hex');
-    console.log(sign_data);
     var options = {
         url: 'http://test.poly.ourjujia.com/api/v1/login',
         method: 'POST',
@@ -56,9 +55,7 @@ exports.generateUserLogin = function(tel, pass) {
     };
     request(options, function (err, res, body) {
       if (!err && res.statusCode == 200) {
-        console.log(body);
-        var res_data = {'id': body.data.id, 'phone': body.data.mobile};
-        resolve(res_data);
+        resolve(body.data);
       } else {
         reject({'code': 1});
       }
@@ -105,9 +102,9 @@ exports.familyUserQueryFamilies = function(user_id, ticket) {
  * ticket # session登录验证
  * family_id #家庭ID
  */
-exports.generateQueryFamilies = function(user_id, ticket) {
+exports.generateQueryFamilies = function(params) {
   return new Promise(function(resolve, reject){
-    var req_data = {'user_id': user_id, 'ticket': ticket};
+    var req_data = {'user_id': params.id, 'ticket': params.ticket};
     var private_key = "GjcfbhCIJ2owQP1Kxn64DqSk5X4YRZ7u";
     var vercy = JSON.stringify(req_data) + private_key;
     var md5sum = crypto.createHash('md5');
@@ -126,10 +123,18 @@ exports.generateQueryFamilies = function(user_id, ticket) {
     request(options, function (err, res, body) {
       if (!err && res.statusCode == 200){
         // for (family in body.data.familis) {
-        //   console.log(family)
-        // }
-        var res_data = {'families': body.data.families}
-        resolve(res_data)
+          // }
+          var families = []
+          //   console.log(family)
+          body.data.families.forEach(function(item, index) {
+              console.log(item);
+              if (item.device_id != undefined){
+                  families.push({"device_id": item.device_id,"family_name": item.family_name})
+              }
+          });
+          var res_data = {"id": params.id, "mobile": params.mobile, "family": families}
+          console.log(res_data);
+          resolve(res_data)
       } else {
         reject('error')
       };

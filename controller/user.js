@@ -21,10 +21,10 @@ var helper = require('../helper/api.js');
 exports.insertusers = function(user){
     userService.insertUser(user)
         .then(function(result) {
-            console.log(result)
+            // console.log(result)
         })
         .catch(function(err) {
-            console.log(err);
+            // console.log(err);
         });
 };
 

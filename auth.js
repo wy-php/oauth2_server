@@ -21,17 +21,19 @@ const validate                             = require('./validate');
 passport.use(new LocalStrategy((username, password, done) => {
   // 1.API接口获取用户密码
   apiutil.generateUserLogin(username, password)
+    .then(function (body) {
+        return apiutil.generateQueryFamilies(body);
+    })
     .then(function(body){
-        console.log(body.id, body.phone);
         // 2.判断数据库中是否存在
-        db.users.findByUsername({'phone': username})
+        db.users.findByUsername({'id': body.id})
           .then(function(user){
           if (user == null){
             console.log('数据库中用户不存在');
             // 这里存储数据
               userCtrl.insertusers(body)
           }
-          console.log(body);
+          //console.log(body);
           return body;
         })
         // .then(user => validate.user(user, password))
