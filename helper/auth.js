@@ -9,7 +9,7 @@ const { Strategy: BearerStrategy }         = require('passport-http-bearer');
 const db                                   = require('../db');
 const validate                             = require('./validate');
 const apiutil                              = require('./api');
-const userCtrl                             = require('../controller/user');
+const userService                             = require('../services/user/index');
 
 
 /**
@@ -20,28 +20,8 @@ const userCtrl                             = require('../controller/user');
  * a user is logged in before asking them to approve the request.
  */
 passport.use(new LocalStrategy((username, password, done) => {
-  // 1.API接口获取用户密码
-  apiutil.generateUserLogin(username, password)
-    .then(function (body) {
-        return apiutil.generateQueryFamilies(body);
-    })
-    .then(function(body){
-        // 2.判断数据库中是否存在
-        db.users.findByUsername({'id': body.id})
-          .then(function(user){
-          if (user == null){
-            console.log('数据库中用户不存在');
-            // 这里存储数据
-              userCtrl.insertusers(body);
-          }
-          //console.log(body);
-          return body;
-        })
-        // .then(user => validate.user(user, password))
-        .then(user => done(null, user))
-        .catch(() => done(null, false));
-    });
-}))
+  userService.saveUserInfo(username, password);
+}));
 
 /**
  * BasicStrategy & ClientPasswordStrategy
