@@ -21,32 +21,27 @@ exports.getUsersByPhone = function (phone) {
 /**
  * 保存用户信息聚合数据
  */
-exports.saveUserInfo = function (username, password) {
+exports.saveUserInfo = function (username, password, done) {
+    var userinfo = {}
     // 1.API接口获取用户密码
     apiUtil.generateUserLogin(username, password)
-        .then(function(body) {
-            // 2.获取家庭列表
+        .then(function (body) {
             return apiUtil.generateQueryFamilies(body);
         })
-        .then(function(body) {
-            // 3.判断数据库中是否存在
-            return userModel.getUsersByPhone({'id': body.id});
+        .then(function (body) {
+            userinfo = body
+            // 2.判断数据库中是否存在
+            return userModel.getUsersByPhone(userinfo);
         })
-        .then(function(user){
-            console.log("==3==")
-            console.log(user)
-            if (user == null){
-                console.log('数据库中用户不存在');
-                // 保存用户信息
-                return userModel.insertUser(user).catch(function(err){console.log(err)});
+        .then(function(result){
+            if (!result.find){
+                console.log('save data');
+                return userModel.generateSaveUser(result.result);
             }
-            return user;
+            return result.result;
         })
-        .then(function(user){
-            console.log("==4==")
-            console.log(user)
+        .then(function(result){
+            done(null, result)
         })
-        .then(user => done(null, user))
-        .catch(() => done(null, false));
+        .catch(() => done('Error', {}))
 }
-

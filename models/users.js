@@ -20,8 +20,8 @@ exports.getUserById = function (id) {
 /*
  * 插入数据到user集合中
  */
-exports.insertUser = function(user) {
-    return new Promise(function(resolve, reject){
+exports.generateSaveUser = function(user) {
+    return new Promise(function(resolve, reject) {
       db.getDB().collection('users', function(err, collection) {
         if (err) {
             return reject(err);
@@ -38,19 +38,40 @@ exports.insertUser = function(user) {
 };
 
 /*
+ * 插入数据到user集合中
+ */
+exports.saveUser = function(user) {
+    db.getDB().collection('users', function(err, collection) {
+        if (err) {
+            return err;
+        }
+        collection.insert(user, {safe: true}, function(err, result){
+            if (err) {
+                return err
+            }
+            console.log(result)
+            return result;
+        });
+    });
+};
+
+/*
  * 通过电话号获取用户
  */
-exports.getUsersByPhone = function(phone){
+exports.getUsersByPhone = function(body){
     return new Promise(function(resolve, reject) {
         db.getDB().collection('users', function(err, collection) {
             if (err) {
-                return reject(err);
+                reject(err);
             }
-            collection.findOne(phone, function(err, result){
+            collection.findOne({'id': body.id}, function(err, result){
                 if (err) {
                     reject(err)
                 }
-                resolve(result);
+                if (result == null) {
+                    resolve({'find':false, 'result': body});
+                }
+                resolve({'find':true, 'result': body});
             });
         });
     });

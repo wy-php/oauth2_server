@@ -19,7 +19,13 @@ const userService                             = require('../services/user/index'
  * a user is logged in before asking them to approve the request.
  */
 passport.use(new LocalStrategy((username, password, done) => {
-  userService.saveUserInfo(username, password);
+  userService.saveUserInfo(username, password, function(err, user){
+      if (err){
+        done(null, false)
+      }else {
+        done(null, user)
+      }
+  });
 }));
 
 /**
