@@ -14,23 +14,10 @@ const userCtrl = require('../controller/user.js');
  * name     : The name of your user
  */
 const users = [{
-  id       : '1',
-  username : 'wangyun',
-  password : '123456',
-  name     : '王允',
-}, {
-  id       : '2',
-  username : 'zhangxuesong',
-  password : '123456',
-  name     : '张雪松',
+  id : 801,
+  phone: '18037538097'
 }];
 
-/**
- * Returns a user if it finds one, otherwise returns null if a user is not found.
- * @param   {String}   id - The unique id of the user to find
- * @returns {Promise} resolved user if found, otherwise resolves undefined
- */
-exports.find = id => Promise.resolve(users.find(user => user.id === id));
 
 /**
  * Returns a user if it finds one, otherwise returns null if a user is not found.
@@ -39,19 +26,10 @@ exports.find = id => Promise.resolve(users.find(user => user.id === id));
  * @returns {Promise} resolved user if found, otherwise resolves undefined
  */
 exports.findByUsername = function(username){
-  // return new Promise(function(resolve, reject){
-  //   userCtrl.findUserByPhone(username).then(function(user){
-  //     console.log(user)
-  //     resolve(user)
-  //   });
-  // });
-
-  // //   .then(function(isexist){
-  // //     // 3.存在返回  不存在存储
-
-  // //   })
-  // //   .catch(function(err){
-  // //     console.log(err);
-  // //   });
-  Promise.resolve(users.find(user => user.username === username));
-}
+  return new Promise(function(resolve, reject){
+    userCtrl.findUserByPhone(username).then(function(user){
+      console.log(user);
+      resolve(user)
+    });
+  });
+};

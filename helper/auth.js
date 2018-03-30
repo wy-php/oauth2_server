@@ -17,13 +17,26 @@ const validate                             = require('./validate');
  * a user is logged in before asking them to approve the request.
  */
 passport.use(new LocalStrategy((username, password, done) => {
-    db.users.findByUsername(username)
-      .then(function (user) { return user })
-      .then(user => validate.user(user, password))
-      .then(user => done(null, user))
-      .catch(() => done(null, false));
-    })
-);
+  // 1.API接口获取用户密码
+  apiutil.generateUserLogin(username, password)
+    .then(function(body){
+        console.log(body.id, body.phone);
+        // 2.判断数据库中是否存在
+        db.users.findByUsername({'phone': username})
+          .then(function(user){
+          if (user == null){
+            console.log('数据库中用户不存在');
+            // 这里存储数据
+              userCtrl.insertusers(body);
+          }
+          console.log(body);
+          return body;
+        })
+        // .then(user => validate.user(user, password))
+        .then(user => done(null, user))
+        .catch(() => done(null, false));
+    });
+}))
 
 /**
  * BasicStrategy & ClientPasswordStrategy
@@ -93,7 +106,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-  db.users.find(id)
+  db.users.findByUsername({'id': id})
   .then(user => done(null, user))
   .catch(err => done(err));
 });
