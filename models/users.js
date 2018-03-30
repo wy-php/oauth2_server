@@ -27,6 +27,10 @@ exports.insertUser = function(user) {
             return reject(err);
         }
         collection.insert(user, {safe: true}, function(err, result){
+            if (err) {
+                reject(err)
+            }
+            console.log(result)
             resolve(result);
         });
       });
@@ -43,6 +47,9 @@ exports.getUsersByPhone = function(phone){
                 return reject(err);
             }
             collection.findOne(phone, function(err, result){
+                if (err) {
+                    reject(err)
+                }
                 resolve(result);
             });
         });

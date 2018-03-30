@@ -8,7 +8,6 @@ const { Strategy: BearerStrategy }         = require('passport-http-bearer');
 
 const db                                   = require('../db');
 const validate                             = require('./validate');
-const apiutil                              = require('./api');
 const userService                             = require('../services/user/index');
 
 

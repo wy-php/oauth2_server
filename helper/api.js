@@ -122,18 +122,14 @@ exports.generateQueryFamilies = function(params) {
     };
     request(options, function (err, res, body) {
       if (!err && res.statusCode == 200){
-        // for (family in body.data.familis) {
-          // }
           var families = []
-          //   console.log(family)
           body.data.families.forEach(function(item, index) {
-              console.log(item);
+              // console.log(item);
               if (item.device_id != undefined){
                   families.push({"device_id": item.device_id,"family_name": item.family_name})
               }
           });
           var res_data = {"id": params.id, "mobile": params.mobile, "family": families}
-          console.log(res_data);
           resolve(res_data)
       } else {
         reject('error')
