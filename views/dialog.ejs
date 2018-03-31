@@ -19,11 +19,19 @@
         <div class="main-text">PolyHome</div>
       </div>
       <div class="pure-control-group labels">
+        <% if(user.length>1){ %>
+        <p>发现您的账户下有<span style="color:red;font-weight:normal;"><%= user.length %></span>个设备</p>
+          <p>您将授权哪个设备？</p>
+        <% }else if(user.length == 1){ %>
+          <p>您将授权您的这个设备吗？</p>
+        <% }else{ %>>
+          <p>抱歉您的该账户下没有任何设备</p>
+        <% } %>
         <p>
-          您将授权<b> <%= client.name %></b>
-          <p> 1. 获取您的设备列表</p>
-          <p> 2. 获取您的情景列表</p>
-          <p> 3. 控制您的设备</p>
+          <% user.forEach(function(value,index){ %>
+            <p><input type="radio" name="device_id" value="<% value.device_id %>" checked><%= value.family_name %></p>
+          <% }) %>
+        <input name="user_id" value="<% user_id %>" type="hidden">
         </p>
       </div>
     </div>
@@ -38,7 +46,36 @@
     </div>
   </fieldset>
 </form>
-
+<script type="application/javascript">
+    var sub = document.getElementById("allow");
+    var uid = document.getElementsByName("user_id");
+    sub.onsubmit = function(){
+        var xhr = new XMLHttpRequest();
+        var data = 'device_id='+getRadioValue()+'&user_id='+uid;//要post提交的数据
+        var url = "";
+        xhr.open('post',url,true);
+        //请求头必须要设置
+        xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+        xhr.send(data);//发送数据到url中
+        xhr.onreadystatechange = function(){
+            if(this.readyState == 4){
+                //如果成功了的话
+                alert(this.responseText);
+            }
+        }
+    };
+    function getRadioValue() {
+        var radios = document.getElementsByName("device_id");
+        var value;
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                value = radios[i].value;
+                break;
+            }
+            return value;
+        }
+    }
+</script>
 </body>
 </html>
 

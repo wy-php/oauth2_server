@@ -62,7 +62,6 @@ exports.saveUserInfo = function (username, password, done) {
         })
         .then(function(result){
             if (!result.find){
-                console.log('save data');
                 userModel.generateSaveUser(result.result);
             }
             return result.result;

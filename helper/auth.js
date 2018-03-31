@@ -20,7 +20,6 @@ passport.use(new LocalStrategy((username, password, done) => {
     if (err) {
       done(null, false);
      } else {
-      console.log(user);
       done(null, user);
     }
   });
