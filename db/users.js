@@ -1,8 +1,5 @@
 'use strict';
 
-const apiutil = require('../helper/api.js');
-const userCtrl = require('../controller/user.js');
-
 /**
  * This is the configuration of the users that are allowed to connected to your authorization
  * server. These represent users of different client applications that can connect to the
@@ -14,10 +11,23 @@ const userCtrl = require('../controller/user.js');
  * name     : The name of your user
  */
 const users = [{
-  id : 801,
-  phone: '18037538097'
+  id       : '1',
+  username : '15712908185',
+  password : '12345678',
+  name     : 'Bob Smith',
+}, {
+  id       : '2',
+  username : 'joe',
+  password : 'password',
+  name     : 'Joe Davis',
 }];
 
+/**
+ * Returns a user if it finds one, otherwise returns null if a user is not found.
+ * @param   {String}   id - The unique id of the user to find
+ * @returns {Promise} resolved user if found, otherwise resolves undefined
+ */
+exports.find = id => Promise.resolve(users.find(user => user.id === id));
 
 /**
  * Returns a user if it finds one, otherwise returns null if a user is not found.
@@ -25,10 +35,5 @@ const users = [{
  * @param   {Function} done     - The user if found, otherwise returns undefined
  * @returns {Promise} resolved user if found, otherwise resolves undefined
  */
-exports.findByUsername = function(username){
-  return new Promise(function(resolve, reject){
-    userCtrl.findUserByPhone(username).then(function(user){
-      resolve(user)
-    });
-  });
-};
+exports.findByUsername = username =>
+  Promise.resolve(users.find(user => user.username === username));

@@ -21,7 +21,7 @@
  */
 const clients = [{
   id            : '1',
-  name          : 'DuerSmartHome',
+  name          : 'Baidu',
   clientId      : 'R3wwlDXdVUFffmOVc3xFQBYzXuCd5LDw',
   clientSecret  : 'GaV5XKy7EoOuLFj8Q9EitvV86lWSG9Nk',
 }];

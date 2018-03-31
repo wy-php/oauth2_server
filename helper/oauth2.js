@@ -7,12 +7,12 @@
 // through a process of the user granting access, and the client exchanging
 // the grant for an access token.
 
+const config      = require('../config');
+const db          = require('../db');
 const login       = require('connect-ensure-login');
 const oauth2orize = require('oauth2orize');
 const passport    = require('passport');
-const config      = require('../config');
-const db          = require('../db');
-const utils       = require('./utils.js');
+const utils       = require('../utils');
 const validate    = require('./validate');
 
 // create OAuth 2.0 server
@@ -64,18 +64,18 @@ server.grant(oauth2orize.grant.token((client, user, ares, done) => {
  */
 server.exchange(oauth2orize.exchange.code((client, code, redirectURI, done) => {
   db.authorizationCodes.delete(code)
-    .then(authCode => validate.authCode(code, authCode, client, redirectURI))
-    .then(authCode => validate.generateTokens(authCode))
-    .then((tokens) => {
-      if (tokens.length === 1) {
-        return done(null, tokens[0], null, expiresIn);
-      }
-      if (tokens.length === 2) {
-        return done(null, tokens[0], tokens[1], expiresIn);
-      }
-      throw new Error('Error exchanging auth code for tokens');
-    })
-    .catch(() => done(null, false));
+  .then(authCode => validate.authCode(code, authCode, client, redirectURI))
+  .then(authCode => validate.generateTokens(authCode))
+  .then((tokens) => {
+    if (tokens.length === 1) {
+      return done(null, tokens[0], null, expiresIn);
+    }
+    if (tokens.length === 2) {
+      return done(null, tokens[0], tokens[1], expiresIn);
+    }
+    throw new Error('Error exchanging auth code for tokens');
+  })
+  .catch(() => done(null, false));
 }));
 
 /**
@@ -87,21 +87,21 @@ server.exchange(oauth2orize.exchange.code((client, code, redirectURI, done) => {
  */
 server.exchange(oauth2orize.exchange.password((client, username, password, scope, done) => {
   db.users.findByUsername(username)
-    .then(user => validate.user(user, password))
-    .then(user => validate.generateTokens({ scope, userID: user.id, clientID: client.id }))
-    .then((tokens) => {
-      if (tokens === false) {
-        return done(null, false);
-      }
-      if (tokens.length === 1) {
-        return done(null, tokens[0], null, expiresIn);
-      }
-      if (tokens.length === 2) {
-        return done(null, tokens[0], tokens[1], expiresIn);
-      }
-      throw new Error('Error exchanging password for tokens');
-    })
-    .catch(() => done(null, false));
+  .then(user => validate.user(user, password))
+  .then(user => validate.generateTokens({ scope, userID: user.id, clientID: client.id }))
+  .then((tokens) => {
+    if (tokens === false) {
+      return done(null, false);
+    }
+    if (tokens.length === 1) {
+      return done(null, tokens[0], null, expiresIn);
+    }
+    if (tokens.length === 2) {
+      return done(null, tokens[0], tokens[1], expiresIn);
+    }
+    throw new Error('Error exchanging password for tokens');
+  })
+  .catch(() => done(null, false));
 }));
 
 /**
@@ -116,8 +116,8 @@ server.exchange(oauth2orize.exchange.clientCredentials((client, scope, done) => 
   const expiration = config.token.calculateExpirationDate();
   // Pass in a null for user id since there is no user when using this grant type
   db.accessTokens.save(token, expiration, null, client.id, scope)
-    .then(() => done(null, token, null, expiresIn))
-    .catch(err => done(err));
+  .then(() => done(null, token, null, expiresIn))
+  .catch(err => done(err));
 }));
 
 /**
@@ -156,36 +156,35 @@ exports.authorization = [
   login.ensureLoggedIn(),
   server.authorization((clientID, redirectURI, scope, done) => {
     db.clients.findByClientId(clientID)
-      .then((client) => {
-        if (client) {
-          client.scope = scope; // eslint-disable-line no-param-reassign
-        }
-        // WARNING: For security purposes, it is highly advisable to check that
-        //          redirectURI provided by the client matches one registered with
-        //          the server.  For simplicity, this example does not.  You have
-        //          been warned.
-        return done(null, client, redirectURI);
-      })
-      .catch(err => done(err));
+    .then((client) => {
+      if (client) {
+        client.scope = scope; // eslint-disable-line no-param-reassign
+      }
+      // WARNING: For security purposes, it is highly advisable to check that
+      //          redirectURI provided by the client matches one registered with
+      //          the server.  For simplicity, this example does not.  You have
+      //          been warned.
+      return done(null, client, redirectURI);
+    })
+    .catch(err => done(err));
   }), (req, res, next) => {
     // Render the decision dialog if the client isn't a trusted client
     // TODO:  Make a mechanism so that if this isn't a trusted client, the user can record that
     // they have consented but also make a mechanism so that if the user revokes access to any of
     // the clients then they will have to re-consent.
     db.clients.findByClientId(req.query.client_id)
-      .then((client) => {
-        if (client != null && client.trustedClient && client.trustedClient === true) {
-          // This is how we short call the decision like the dialog below does
-          server.decision({ loadTransaction: false }, (serverReq, callback) => {
-            callback(null, { allow: true });
-          })(req, res, next);
-        } else {
-          res.render('dialog', { transactionID: req.oauth2.transactionID, user: req.user, client: req.oauth2.client });
-        }
-      })
-      .catch(function(){
+    .then((client) => {
+      if (client != null && client.trustedClient && client.trustedClient === true) {
+        // This is how we short call the decision like the dialog below does
+        server.decision({ loadTransaction: false }, (serverReq, callback) => {
+          callback(null, { allow: true });
+        })(req, res, next);
+      } else {
         res.render('dialog', { transactionID: req.oauth2.transactionID, user: req.user, client: req.oauth2.client });
-      });
+      }
+    })
+    .catch(() =>
+      res.render('dialog', { transactionID: req.oauth2.transactionID, user: req.user, client: req.oauth2.client }));
   }];
 
 /**

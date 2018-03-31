@@ -9,12 +9,12 @@ const passport       = require('passport');
 const https          = require('https');
 const cookieParser   = require('cookie-parser');
 
-const client         = require('./helper/client');
+const client         = require('./client');
 const config         = require('./config');
 const db             = require('./db');
 const oauth2         = require('./helper/oauth2');
-const site           = require('./router/site');
-const token          = require('./token');
+const site           = require('./site');
+const token          = require('./helper/token');
 const user           = require('./user');
 const userCtrl       = require('./controller/user');
 
@@ -51,7 +51,7 @@ app.get('/account', site.account);
 
 app.get('/authorize',                   oauth2.authorization);
 app.post('/dialog/authorize/decision',  oauth2.decision);
-app.post('/token',                      oauth2.token);
+app.post('/oauth/token',                oauth2.token);
 
 // =======================================
 // Mimicking google's token revoke endpoint from

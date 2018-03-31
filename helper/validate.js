@@ -1,9 +1,9 @@
 'use strict';
 
-const process = require('process');
 const config  = require('../config');
 const db      = require('../db');
-const utils   = require('./utils');
+const utils   = require('../utils');
+const process = require('process');
 
 /** Validate object to attach all functions to  */
 const validate = Object.create(null);
@@ -33,11 +33,11 @@ validate.logAndThrow = (msg) => {
  * @returns {Object} The user if valid
  */
 validate.user = (user, password) => {
-    validate.userExists(user);
-    if (user.password !== password) {
-        validate.logAndThrow('User password does not match');
-    }
-    return user;
+  validate.userExists(user);
+  if (user.password !== password) {
+    validate.logAndThrow('User password does not match');
+  }
+  return user;
 };
 
 /**
@@ -47,10 +47,10 @@ validate.user = (user, password) => {
  * @returns {Object} The user if valid
  */
 validate.userExists = (user) => {
-    if (user == null) {
-      validate.logAndThrow('User does not exist');
-    }
-    return user;
+  if (user == null) {
+    validate.logAndThrow('User does not exist');
+  }
+  return user;
 };
 
 /**
@@ -96,13 +96,13 @@ validate.token = (token, accessToken) => {
   // token is a user token
   if (token.userID != null) {
     return db.users.find(token.userID)
-      .then(user => validate.userExists(user))
-      .then(user => user);
+    .then(user => validate.userExists(user))
+    .then(user => user);
   }
   // token is a client token
   return db.clients.find(token.clientID)
-    .then(client => validate.clientExists(client))
-    .then(client => client);
+  .then(client => validate.clientExists(client))
+  .then(client => client);
 };
 
 /**
@@ -162,7 +162,8 @@ validate.isRefreshToken = ({ scope }) => scope != null && scope.indexOf('offline
  */
 validate.generateRefreshToken = ({ userId, clientID, scope }) => {
   const refreshToken = utils.createToken({ sub : userId, exp : config.refreshToken.expiresIn });
-  return db.refreshTokens.save(refreshToken, userId, clientID, scope).then(() => refreshToken);
+  return db.refreshTokens.save(refreshToken, userId, clientID, scope)
+  .then(() => refreshToken);
 };
 
 /**
@@ -175,7 +176,8 @@ validate.generateRefreshToken = ({ userId, clientID, scope }) => {
 validate.generateToken = ({ userID, clientID, scope }) => {
   const token      = utils.createToken({ sub : userID, exp : config.token.expiresIn });
   const expiration = config.token.calculateExpirationDate();
-  return db.accessTokens.save(token, expiration, userID, clientID, scope).then(() => token);
+  return db.accessTokens.save(token, expiration, userID, clientID, scope)
+  .then(() => token);
 };
 
 /**
@@ -201,7 +203,7 @@ validate.generateTokens = (authCode) => {
  * @param   {Object}  token - The token to check
  * @returns {Promise} Resolved with the token if it is a valid token otherwise rejected with error
  */
-validate.tokenForHttp = token => {
+validate.tokenForHttp = token =>
   new Promise((resolve, reject) => {
     try {
       utils.verifyToken(token);
@@ -212,7 +214,6 @@ validate.tokenForHttp = token => {
     }
     resolve(token);
   });
-}
 
 /**
  * Given a token this will return the token if it is not null. Otherwise this will throw a
@@ -229,6 +230,7 @@ validate.tokenExistsForHttp = (token) => {
   }
   return token;
 };
+
 
 /**
  * Given a client this will return the client if it is not null. Otherwise this will throw a
