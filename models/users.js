@@ -8,11 +8,41 @@ var db = require('./base.js');
  */
 exports.getUserById = function (id) {
     return new Promise(function(resolve, reject) {
-        db.findOne({_id: id}, function(err, collection){
+        db.getDB().collection('users', function(err, collection) {
             if (err) {
-                return reject(err)
+                reject(err);
             }
-            resolve(collection)
+            collection.findOne({'id': id}, function(err, result){
+                if (err) {
+                    reject(err);
+                }
+                if (result == null) {
+                    resolve(result);
+                }
+                resolve(result);
+            });
+        });
+    });
+};
+
+/*
+ * 根据用户名获取用户
+ */
+exports.findUserByName= function (username) {
+    return new Promise(function(resolve, reject) {
+        db.getDB().collection('users', function(err, collection) {
+            if (err) {
+                reject(err);
+            }
+            collection.findOne({'mobile': username}, function(err, result){
+                if (err) {
+                    reject(err);
+                }
+                if (result == null) {
+                    resolve(result);
+                }
+                resolve(result);
+            });
         });
     });
 };
@@ -58,13 +88,13 @@ exports.saveUser = function(user) {
 /*
  * 通过电话号获取用户
  */
-exports.getUsersByPhone = function(body){
+exports.getUsersByUserName = function(body){
     return new Promise(function(resolve, reject) {
         db.getDB().collection('users', function(err, collection) {
             if (err) {
                 reject(err);
             }
-            collection.findOne({'id': body.id}, function(err, result){
+            collection.findOne({'mobile': body.mobile}, function(err, result){
                 if (err) {
                     reject(err)
                 }

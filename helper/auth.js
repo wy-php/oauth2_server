@@ -16,18 +16,18 @@ const userService                          = require('../services/user/index');
  * a user is logged in before asking them to approve the request.
  */
 passport.use(new LocalStrategy((username, password, done) => {
-  // userService.saveUserInfo(username, password, function(err, user){
-  //   if (err) {
-  //     done(null, false);
-  //    } else {
-  //     console.log(user);
-  //     done(null, user);
-  //   }
-  // });
-  db.users.findByUsername(username)
-   .then(user => validate.user(user, password))
-   .then(user => done(null, user))
-   .catch(() => done(null, false));
+  userService.saveUserInfo(username, password, function(err, user){
+    if (err) {
+      done(null, false);
+     } else {
+      console.log(user);
+      done(null, user);
+    }
+  });
+  // db.users.findByUsername(username)
+  //  .then(user => validate.user(user, password))
+  //  .then(user => done(null, user))
+  //  .catch(() => done(null, false));
 }));
 
 /**
