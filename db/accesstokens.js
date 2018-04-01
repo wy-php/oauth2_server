@@ -1,6 +1,7 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
+const tokenModels = require('../models/tokens')
 
 // The access tokens.
 // You will use these to access your end point data through the means outlined
@@ -20,7 +21,12 @@ let tokens = Object.create(null);
 exports.find = (token) => {
   try {
     const id = jwt.decode(token).jti;
-    return Promise.resolve(tokens[id]);
+    return tokenModels.generateGetToken(id)
+      .then(function(tokeninfo){
+        userID = tokeninfo['userid'], expirationDate = tokeninfo['expirationdate'], clientID = tokeninfo['clientid'], scope = tokeninfo['scope'];
+        tokens[id] = { userID, expirationDate, clientID, scope };
+        return Promise.resolve(tokens[id]);
+      })
   } catch (error) {
     return Promise.resolve(undefined);
   }
@@ -38,10 +44,14 @@ exports.find = (token) => {
  * @returns {Promise} resolved with the saved token
  */
 exports.save = (token, expirationDate, userID, clientID, scope) => {
-  // console.log('save token:' + token + expirationDate + userID + clientID + scope);
   const id = jwt.decode(token).jti;
-  tokens[id] = { userID, expirationDate, clientID, scope };
-  return Promise.resolve(tokens[id]);
+  token_info = {'id': id, 'token': token, 'userid': userID, 'expirationdate': expirationDate, 'clientid': clientID, 'scope': scope };
+  return tokenModels.generateSaveToken(token_info)
+    .then(function(tokeninfo){
+      console.log(tokeninfo);
+      tokens[id] = { userID, expirationDate, clientID, scope };
+      return Promise.resolve(tokens[id]);
+    });
 };
 
 /**
@@ -51,10 +61,14 @@ exports.save = (token, expirationDate, userID, clientID, scope) => {
  */
 exports.delete = (token) => {
   try {
+    console.log("删除指定的token数据");
     const id = jwt.decode(token).jti;
-    const deletedToken = tokens[id];
-    delete tokens[id];
-    return Promise.resolve(deletedToken);
+    return tokenModels.generateDeleteTokenById(id)
+      .then(function(tokeninfo){
+        const deletedToken = tokens[id];
+        delete tokens[id];
+        return Promise.resolve(deletedToken);
+      });
   } catch (error) {
     return Promise.resolve(undefined);
   }
@@ -66,6 +80,7 @@ exports.delete = (token) => {
  * @returns {Promise} resolved with an associative of tokens that were expired
  */
 exports.removeExpired = () => {
+  console.log("清理过期的token数据");
   const keys    = Object.keys(tokens);
   const expired = keys.reduce((accumulator, key) => {
     if (new Date() > tokens[key].expirationDate) {

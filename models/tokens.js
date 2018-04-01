@@ -24,13 +24,32 @@ exports.generateSaveToken = function (tokeninfo) {
 /*
  * 获取accesstoken
  */
-exports.generateGetToken = function (token) {
+exports.generateGetTokenById = function (id) {
     return new Promise(function (resolve, reject) {
         db.getDB().collection('tokens', function (err, collection) {
             if (err) {
                 reject(err);
             }
-            collection.findOne(token, {safe: true}, function (err, result) {
+            collection.findOne({"id": id}, {safe: true}, function (err, result) {
+                if (err) {
+                    reject(err);
+                }
+                resolve(result);
+            });
+        });
+    });
+};
+
+/*
+ * 删除指定accesstoken
+ */
+exports.generateDeleteTokenById = function (id) {
+    return new Promise(function (resolve, reject) {
+        db.getDB().collection('tokens', function (err, collection) {
+            if (err) {
+                reject(err);
+            }
+            collection.remove({"id": id}, {safe: true}, function (err, result) {
                 if (err) {
                     reject(err);
                 }
