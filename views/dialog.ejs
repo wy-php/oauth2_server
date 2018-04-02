@@ -13,6 +13,7 @@
 
 <form action="/dialog/authorize/decision" method="post" class="pure-form pure-form-stacked">
   <input name="transaction_id" type="hidden" value="<%= transactionID %>">
+  <input name="device_ids" type="hidden" value="123123">
   <fieldset>
     <div class="upper-box">
       <div>
@@ -29,9 +30,9 @@
         <% } %>
         <p>
           <% user.forEach(function(value,index){ %>
-            <p><input type="radio" name="device_id" value="<% value.device_id %>" checked><%= value.family_name %></p>
+            <p><input type="radio" name="device_id" value="<%= value.device_id %>" checked><%= value.family_name %></p>
           <% }) %>
-        <input name="user_id" value="<% user_id %>" type="hidden">
+        <input name="user_id" type="hidden" value="<%= user_id %>">
         </p>
       </div>
     </div>
