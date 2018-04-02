@@ -41,6 +41,44 @@ exports.generateGetTokenById = function (id) {
 };
 
 /*
+ * 获取accesstoken
+ */
+exports.generateGetTokenByUserId = function (user_id) {
+    return new Promise(function (resolve, reject) {
+        db.getDB().collection('tokens', function (err, collection) {
+            if (err) {
+                reject(err);
+            }
+            collection.findOne({"user_id": user_id}, {safe: true}, function (err, result) {
+                if (err) {
+                    reject(err);
+                }
+                resolve(result);
+            });
+        });
+    });
+};
+
+/*
+ * 更新gengaccesstoken信息
+ */
+exports.generateUpdateToken = function (tokeninfo) {
+    return new Promise(function (resolve, reject) {
+        db.getDB().collection('tokens', function (err, collection) {
+            if (err) {
+                reject(err);
+            }
+            collection.update({'user_id': tokeninfo.user_id}, {$set: {'token': tokeninfo.token}}, {safe: true}, function (err, result) {
+                if (err) {
+                    reject(err);
+                }
+                resolve(result);
+            });
+        });
+    });
+};
+
+/*
  * 删除指定accesstoken
  */
 exports.generateDeleteTokenById = function (id) {
@@ -67,7 +105,10 @@ exports.saveToken = function (tokeninfo) {
         if (err) {
             return err;
         }
-        collection.insert(tokeninfo, {safe: true}, function(err, result){
+        collection.insert(tokeninfo, {safe: true}, function (err, result) {
+            if (err) {
+                return err;
+            }
             return result;
         });
     });

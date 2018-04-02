@@ -19,17 +19,17 @@ let tokens = Object.create(null);
  * @returns {Promise} resolved with the token if found, otherwise resolved with undefined
  */
 exports.find = (token) => {
-  try {
-    const id = jwt.decode(token).jti;
-    return tokenModels.generateGetToken(id)
-      .then(function(tokeninfo){
-        userID = tokeninfo['userid'], expirationDate = tokeninfo['expirationdate'], clientID = tokeninfo['clientid'], scope = tokeninfo['scope'];
-        tokens[id] = { userID, expirationDate, clientID, scope };
+    try {
+        let id = jwt.decode(token).jti;
+        console.log(id);
+        tokenModels.generateGetTokenById(id)
+            .then(function (token_info) {
+                console.log(token_info);
+            });
         return Promise.resolve(tokens[id]);
-      })
-  } catch (error) {
-    return Promise.resolve(undefined);
-  }
+    } catch (error) {
+        return Promise.resolve(undefined);
+    }
 };
 
 /**
@@ -44,14 +44,25 @@ exports.find = (token) => {
  * @returns {Promise} resolved with the saved token
  */
 exports.save = (token, expirationDate, userID, clientID, scope) => {
-  const id = jwt.decode(token).jti;
-  token_info = {'id': id, 'token': token, 'userid': userID, 'expirationdate': expirationDate, 'clientid': clientID, 'scope': scope };
-  return tokenModels.generateSaveToken(token_info)
-    .then(function(tokeninfo){
-      console.log(tokeninfo);
-      tokens[id] = { userID, expirationDate, clientID, scope };
-      return Promise.resolve(tokens[id]);
-    });
+    let id = jwt.decode(token).jti;
+    // console.log('token: ' + token + "user_id" + userID);
+    let token_info = {'id': id, 'token': token, 'user_id': userID, 'expir': expirationDate, 'client_id': clientID, 'scope': scope};
+    tokenModels.generateGetTokenByUserId(token_info.user_id)
+        .then(function (token) {
+            if (token == null) {
+                console.log('token 不存在 保存');
+                return tokenModels.generateSaveToken(token_info);
+            } else {
+                console.log('token 存在 更新');
+                return tokenModels.generateUpdateToken(token_info);
+            }
+        })
+        .then(function (token) {
+            console.log('token_info: ' + token);
+        });
+
+    tokens[id] = { userID, expirationDate, clientID, scope };
+    return Promise.resolve(tokens[id]);
 };
 
 /**
@@ -60,18 +71,14 @@ exports.save = (token, expirationDate, userID, clientID, scope) => {
  * @returns {Promise} resolved with the deleted token
  */
 exports.delete = (token) => {
-  try {
-    console.log("删除指定的token数据");
-    const id = jwt.decode(token).jti;
-    return tokenModels.generateDeleteTokenById(id)
-      .then(function(tokeninfo){
+    try {
+        const id = jwt.decode(token).jti;
         const deletedToken = tokens[id];
         delete tokens[id];
         return Promise.resolve(deletedToken);
-      });
-  } catch (error) {
-    return Promise.resolve(undefined);
-  }
+    } catch (error) {
+        return Promise.resolve(undefined);
+    }
 };
 
 /**
@@ -80,17 +87,16 @@ exports.delete = (token) => {
  * @returns {Promise} resolved with an associative of tokens that were expired
  */
 exports.removeExpired = () => {
-  console.log("清理过期的token数据");
-  const keys    = Object.keys(tokens);
-  const expired = keys.reduce((accumulator, key) => {
-    if (new Date() > tokens[key].expirationDate) {
-      const expiredToken = tokens[key];
-      delete tokens[key];
-      accumulator[key] = expiredToken; // eslint-disable-line no-param-reassign
-    }
-    return accumulator;
-  }, Object.create(null));
-  return Promise.resolve(expired);
+    const keys    = Object.keys(tokens);
+    const expired = keys.reduce((accumulator, key) => {
+      if (new Date() > tokens[key].expirationDate) {
+        const expiredToken = tokens[key];
+        delete tokens[key];
+        accumulator[key] = expiredToken; // eslint-disable-line no-param-reassign
+      }
+      return accumulator;
+    }, Object.create(null));
+    return Promise.resolve(expired);
 };
 
 /**
@@ -98,7 +104,7 @@ exports.removeExpired = () => {
  * @returns {Promise} resolved with all removed tokens returned
  */
 exports.removeAll = () => {
-  const deletedTokens = tokens;
-  tokens              = Object.create(null);
-  return Promise.resolve(deletedTokens);
+    const deletedTokens = tokens;
+    tokens              = Object.create(null);
+    return Promise.resolve(deletedTokens);
 };
