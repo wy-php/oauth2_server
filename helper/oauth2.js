@@ -180,11 +180,12 @@ exports.authorization = [
           callback(null, { allow: true });
         })(req, res, next);
       } else {
-        res.render('dialog', { transactionID: req.oauth2.transactionID, user: req.user, client: req.oauth2.client });
+        console.log({ transactionID: req.oauth2.transactionID, user: req.user.family, client: req.oauth2.client })
+        res.render('dialog', { transactionID: req.oauth2.transactionID, user: req.user.family, user_id: req.user.id, client: req.oauth2.client });
       }
     })
     .catch(() =>
-      res.render('dialog', { transactionID: req.oauth2.transactionID, user: req.user, client: req.oauth2.client }));
+        res.render('dialog', { transactionID: req.oauth2.transactionID, user: req.user.family, user_id: req.user.id, client: req.oauth2.client }));
   }];
 
 /**
