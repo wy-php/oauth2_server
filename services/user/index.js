@@ -57,17 +57,10 @@ exports.saveUserInfo = function (username, password, done) {
             return apiUtil.generateQueryFamilies(body);
         })
         .then(function (body) {
-            // 2.判断数据库中是否存在
-            return userModel.getUsersByUserName(body);
+            return userModel.generateSaveUser(body);
         })
-        .then(function(result){
-            if (!result.find){
-                userModel.generateSaveUser(result.result);
-            }
-            return result.result;
+        .then(function (result) {
+            done(null, result);
         })
-        .then(function(result){
-            done(null, result)
-        })
-        .catch(() => done('Error', {}))
+        .catch(() => done('Error', {}));
 }

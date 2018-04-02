@@ -22,7 +22,7 @@ exports.token = {
  * expiresIn - The time in minutes before the code token expires.  Default is 5 minutes.
  */
 exports.codeToken = {
-  expiresIn : 5 * 60,
+  expiresIn : 10,
 };
 
 /**

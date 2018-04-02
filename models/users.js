@@ -56,11 +56,30 @@ exports.generateSaveUser = function(user) {
         if (err) {
             return reject(err);
         }
-        collection.insert(user, {safe: true}, function(err, result){
+        collection.update({'id': user.id}, {$set: user}, {upsert: true}, function(err, result){
+            if (err) {
+                reject(err);
+            }
+            console.log(user);
+            resolve(user);
+        });
+      });
+    })
+};
+
+/*
+ * 根据user_id更新家庭
+ */
+exports.generateUpdateFamilyByUser = function(user_id, device_id) {
+    return new Promise(function(resolve, reject) {
+      db.getDB().collection('users', function(err, collection) {
+        if (err) {
+            return reject(err);
+        }
+        collection.update({'id': parseInt(user_id)}, {$set: {'family': [{'device_id': device_id}]}}, function(err, result){
             if (err) {
                 reject(err)
             }
-            console.log(result)
             resolve(result);
         });
       });
