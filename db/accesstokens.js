@@ -50,10 +50,10 @@ exports.save = (token, expirationDate, userID, clientID, scope) => {
     tokenModels.generateGetTokenByUserId(token_info.user_id)
         .then(function (token) {
             if (token == null) {
-                console.log('token 不存在 保存');
+                console.log('token save');
                 return tokenModels.generateSaveToken(token_info);
             } else {
-                console.log('token 存在 更新');
+                console.log('token update');
                 return tokenModels.generateUpdateToken(token_info);
             }
         })

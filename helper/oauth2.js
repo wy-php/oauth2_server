@@ -48,7 +48,6 @@ server.grant(oauth2orize.grant.code((client, redirectURI, user, ares, done) => {
 server.grant(oauth2orize.grant.token((client, user, ares, done) => {
   const token      = utils.createToken({ sub : user.id, exp : config.token.expiresIn });
   const expiration = config.token.calculateExpirationDate();
-
   db.accessTokens.save(token, expiration, user.id, client.id, client.scope)
   .then(() => done(null, token, expiresIn))
   .catch(err => done(err));
