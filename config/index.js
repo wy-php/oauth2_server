@@ -22,7 +22,7 @@ exports.token = {
  * expiresIn - The time in minutes before the code token expires.  Default is 5 minutes.
  */
 exports.codeToken = {
-  expiresIn : 10,
+  expiresIn : 5*60,
 };
 
 /**
@@ -54,7 +54,7 @@ exports.db = {
  * secret - The session secret that you should change to what you want
  */
 exports.session = {
-  maxAge : 3600000 * 24 * 7 * 52,
+  maxAge : 1000*5*60,
   secret : 'A Secret That Should Be Changed', // TODO: You need to change this secret to something that you choose for your secret
 };
 

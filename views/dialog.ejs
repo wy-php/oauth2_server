@@ -24,12 +24,12 @@
           <p>您将授权哪个设备？</p>
         <% }else if(user.length == 1){ %>
           <p>您将授权您的这个设备吗？</p>
-        <% }else{ %>>
+        <% }else{ %>
           <p>抱歉您的该账户下没有任何设备</p>
         <% } %>
         <p>
           <% user.forEach(function(value,index){ %>
-            <p><input type="radio" name="device_id" value="<%= value.device_id %>" checked><%= value.family_name %></p>
+            <p><input type="radio" name="device_id" value="<%= value.device_id + "," + value.family_name %>" checked>  <%= value.family_name %></p>
           <% }) %>
         <input name="user_id" type="hidden" value="<%= user_id %>">
         </p>
@@ -38,43 +38,18 @@
     <div class="bottom-box">
       <div class="pure-controls accept-cancel-buttons">
         <div>
-          <input class="pure-button pure-button-primary" type="submit" value="授权" id="allow">
-          <span>&nbsp&nbsp</span>
-          <input class="pure-button" type="submit" value="取消" name="cancel" id="deny">
+          <% if(user.length >= 1){ %>
+            <input class="pure-button pure-button-primary" type="submit" value="授权" id="allow">
+            <span>&nbsp&nbsp</span>
+            <input class="pure-button" type="submit" value="取消" name="cancel" id="deny">
+          <% } %>
         </div>
       </div>
     </div>
   </fieldset>
 </form>
 <script type="application/javascript">
-    var sub = document.getElementById("allow");
-    var uid = document.getElementsByName("user_id");
-    sub.onsubmit = function(){
-        var xhr = new XMLHttpRequest();
-        var data = 'device_id='+getRadioValue()+'&user_id='+uid;//要post提交的数据
-        var url = "";
-        xhr.open('post',url,true);
-        //请求头必须要设置
-        xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
-        xhr.send(data);//发送数据到url中
-        xhr.onreadystatechange = function(){
-            if(this.readyState == 4){
-                //如果成功了的话
-                alert(this.responseText);
-            }
-        }
-    };
-    function getRadioValue() {
-        var radios = document.getElementsByName("device_id");
-        var value;
-        for (var i = 0; i < radios.length; i++) {
-            if (radios[i].checked) {
-                value = radios[i].value;
-                break;
-            }
-            return value;
-        }
-    }
+
 </script>
 </body>
 </html>

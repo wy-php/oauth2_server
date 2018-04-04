@@ -76,7 +76,8 @@ exports.generateUpdateFamilyByUser = function(user_id, device_id) {
         if (err) {
             return reject(err);
         }
-        collection.update({'id': parseInt(user_id)}, {$set: {'family': [{'device_id': device_id}]}}, function(err, result){
+        console.log(device_id.substring(0,device_id.indexOf(",")));
+        collection.update({'id': parseInt(user_id)}, {$set: {'family': [{'device_id': device_id.substring(0,device_id.indexOf(",")),'family_name': device_id.substring(device_id.indexOf(",") + 1)}]}}, function(err, result){
             if (err) {
                 reject(err)
             }
