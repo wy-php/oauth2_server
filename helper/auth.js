@@ -18,9 +18,9 @@ const userService                          = require('../services/user/index');
 passport.use(new LocalStrategy((username, password, done) => {
   userService.saveUserInfo(username, password, function(err, user){
     if (err) {
-      done(null, false);
+        done(null, false);
      } else {
-      done(null, user);
+        done(null, user);
     }
   });
   // db.users.findByUsername(username)
