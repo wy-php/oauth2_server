@@ -26,9 +26,7 @@ exports.createToken = ({ exp = 3600, sub = '' } = {}) => {
     jti : uuid(),
     sub,
     exp : Math.floor(Date.now() / 1000) + exp,
-  }, privateKey, {
-    algorithm: 'RS256',
-  });
+  }, 'dueros');
 
   return token;
 };
@@ -39,4 +37,4 @@ exports.createToken = ({ exp = 3600, sub = '' } = {}) => {
  * @throws  {Error} Error if the token could not be verified
  * @returns {Object} The token decoded and verified
  */
-exports.verifyToken = token => jwt.verify(token, publicKey);
+exports.verifyToken = token => jwt.verify(token, 'dueros');

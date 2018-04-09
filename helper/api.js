@@ -10,11 +10,11 @@ exports.userLogin = function(tel, pass) {
     var req_data = {'mobile': tel, 'password': pass};
     var private_key = "GjcfbhCIJ2owQP1Kxn64DqSk5X4YRZ7u";
     var vercy = JSON.stringify(req_data) + private_key;
-    console.log(vercy)
+    // console.log(vercy)
     var md5sum = crypto.createHash('md5');
     md5sum.update(vercy);
     var sign_data = md5sum.digest('hex');
-    console.log(sign_data);
+    // console.log(sign_data);
     var options = {
         url: 'http://test.poly.ourjujia.com/api/v1/login',
         method: 'POST',
