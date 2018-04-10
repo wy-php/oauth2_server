@@ -29,7 +29,7 @@
         <% } %>
         <p>
           <% user.forEach(function(value,index){ %>
-            <p><input type="radio" name="device_id" value="<%= value.device_id + "," + value.family_name %>" checked>  <%= value.family_name %></p>
+            <p><input type="radio" name="device_id" value="<%= value.family_id + "|,|" + value.device_id + "|,|" + value.family_name %>" checked>  <%= value.family_name %></p>
           <% }) %>
         <input name="user_id" type="hidden" value="<%= user_id %>">
         </p>
