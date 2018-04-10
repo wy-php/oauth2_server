@@ -54,7 +54,7 @@ exports.generateUserLogin = function(tel, pass) {
         }
     };
     request(options, function (err, res, body) {
-      if (!err && res.statusCode == 200) {
+      if (!err && res.statusCode == 200 && body.error_code == 0) {
         resolve(body.data);
       } else {
         reject({'code': 1});
@@ -123,12 +123,14 @@ exports.generateQueryFamilies = function(params) {
     request(options, function (err, res, body) {
       if (!err && res.statusCode == 200){
           var families = []
-          body.data.families.forEach(function(item, index) {
-              // console.log(item);
-              if (item.device_id != undefined){
-                  families.push({"device_id": item.device_id,"family_name": item.family_name})
-              }
-          });
+          if(body.data.families){
+              body.data.families.forEach(function(item, index) {
+                  // console.log(item);
+                  if (item.device_id != undefined){
+                      families.push({"device_id": item.device_id,"family_name": item.family_name,"family_id": item.id})
+                  }
+              });
+          }
           var res_data = {"id": params.id, "mobile": params.mobile, "family": families}
           resolve(res_data)
       } else {

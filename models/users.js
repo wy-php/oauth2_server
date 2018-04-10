@@ -60,7 +60,6 @@ exports.generateSaveUser = function(user) {
             if (err) {
                 reject(err);
             }
-            console.log(user);
             resolve(user);
         });
       });
@@ -76,8 +75,8 @@ exports.generateUpdateFamilyByUser = function(user_id, device_id) {
         if (err) {
             return reject(err);
         }
-        console.log(device_id.substring(0,device_id.indexOf(",")));
-        collection.update({'id': parseInt(user_id)}, {$set: {'family': [{'device_id': device_id.substring(0,device_id.indexOf(",")),'family_name': device_id.substring(device_id.indexOf(",") + 1)}]}}, function(err, result){
+        let params_all = device_id.split("|,|");
+        collection.update({'id': parseInt(user_id)}, {$set: {'family': [{'family_id': params_all[0],'device_id': params_all[1], 'family_name': params_all[2]}]}}, function(err, result){
             if (err) {
                 reject(err)
             }

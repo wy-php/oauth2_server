@@ -180,7 +180,6 @@ exports.authorization = [
           callback(null, { allow: true });
         })(req, res, next);
       } else {
-        console.log({ transactionID: req.oauth2.transactionID, user: req.user.family, client: req.oauth2.client });
         res.render('dialog', { transactionID: req.oauth2.transactionID, user: req.user.family, user_id: req.user.id, client: req.oauth2.client });
       }
     })
@@ -199,10 +198,8 @@ exports.authorization = [
 exports.decision = [
   login.ensureLoggedIn(),
   (req,res,next) => {
-      console.log(req.body);
       userModels.generateUpdateFamilyByUser(req.body.user_id, req.body.device_id)
         .then(function(user){
-          console.log(user);
           next();
         });
   },
