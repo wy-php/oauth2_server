@@ -16,7 +16,7 @@ exports.userLogin = function(tel, pass) {
     var sign_data = md5sum.digest('hex');
     // console.log(sign_data);
     var options = {
-        url: 'http://test.poly.ourjujia.com/api/v1/login',
+        url: 'http://api.ourjujia.com/api/v1/login',
         method: 'POST',
         json: true,
         timeout: 30000,
@@ -44,7 +44,7 @@ exports.generateUserLogin = function(tel, pass) {
     md5sum.update(vercy);
     var sign_data = md5sum.digest('hex');
     var options = {
-        url: 'http://test.poly.ourjujia.com/api/v1/login',
+        url: 'http://api.ourjujia.com/api/v1/login',
         method: 'POST',
         json: true,
         timeout: 30000,
@@ -78,7 +78,7 @@ exports.familyUserQueryFamilies = function(user_id, ticket) {
   md5sum.update(vercy);
   var sign_data = md5sum.digest('hex');
   var options = {
-      url: 'http://test.poly.ourjujia.com/api/v1/family_user_queryfamilies',
+      url: 'http://api.ourjujia.com/api/v1/family_user_queryfamilies',
       method: 'POST',
       json: true,
       timeout: 30000,
@@ -112,7 +112,7 @@ exports.generateQueryFamilies = function(params) {
     md5sum.update(vercy);
     var sign_data = md5sum.digest('hex');
     var options = {
-        url: 'http://test.poly.ourjujia.com/api/v1/family_user_queryfamilies',
+        url: 'http://api.ourjujia.com/api/v1/family_user_queryfamilies',
         method: 'POST',
         json: true,
         timeout: 30000,
