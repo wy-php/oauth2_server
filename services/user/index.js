@@ -54,9 +54,11 @@ exports.saveUserInfo = function (username, password, done) {
     // 1.API接口获取用户密码
     apiUtil.generateUserLogin(username, password)
         .then(function (body) {
+            console.log(body);
             return apiUtil.generateQueryFamilies(body);
         })
         .then(function (body) {
+            console.log(body);
             return userModel.generateSaveUser(body);
         })
         .then(function (result) {
